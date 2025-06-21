@@ -3,22 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Currency Converter</title>
+  <title>Crypto Converter</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       font-family: 'Cairo', sans-serif;
-      background: linear-gradient(135deg, #dfe9f3, #ffffff);
+      background: linear-gradient(135deg, #e0f7fa, #fff);
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
       margin: 0;
+      flex-direction: column;
     }
 
     .converter {
@@ -27,8 +26,15 @@
       border-radius: 20px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.1);
       width: 100%;
-      max-width: 360px;
+      max-width: 380px;
       text-align: center;
+    }
+
+    .logo {
+      font-size: 26px;
+      font-weight: bold;
+      color: #007bff;
+      margin-bottom: 10px;
     }
 
     h2 {
@@ -69,37 +75,44 @@
       color: #444;
     }
 
-    .icon {
-      font-size: 30px;
-      color: #007bff;
-      margin-bottom: 10px;
+    .footer {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #666;
     }
   </style>
 </head>
 <body>
 
   <div class="converter">
-    <div class="icon"><i class="fas fa-money-bill-wave"></i></div>
-    <h2>Currency Converter</h2>
+    <div class="logo">🪙 CryptoX by Mohamed</div>
+    <h2>Crypto Currency Converter</h2>
 
     <input type="number" id="amount" placeholder="Enter amount" />
 
     <select id="fromCurrency">
-      <option value="USD">USD</option>
-      <option value="EGP">EGP</option>
-      <option value="EUR">EUR</option>
+      <option value="bitcoin">Bitcoin (BTC)</option>
+      <option value="ethereum">Ethereum (ETH)</option>
+      <option value="tether">Tether (USDT)</option>
+      <option value="solana">Solana (SOL)</option>
+      <option value="binancecoin">Binance Coin (BNB)</option>
     </select>
 
     <select id="toCurrency">
-      <option value="EGP">EGP</option>
-      <option value="USD">USD</option>
-      <option value="EUR">EUR</option>
+      <option value="usd">US Dollar (USD)</option>
+      <option value="bitcoin">Bitcoin (BTC)</option>
+      <option value="ethereum">Ethereum (ETH)</option>
+      <option value="tether">Tether (USDT)</option>
+      <option value="solana">Solana (SOL)</option>
+      <option value="binancecoin">Binance Coin (BNB)</option>
     </select>
 
-    <button onclick="convert()"><i class="fas fa-exchange-alt"></i> Convert</button>
+    <button onclick="convert()">🔄 Convert</button>
 
     <div class="result" id="result"></div>
   </div>
+
+  <div class="footer">Built by Mohamed Ibrahim © 2025</div>
 
   <script>
     async function convert() {
@@ -113,16 +126,17 @@
       }
 
       try {
-        const url = `https://api.exchangerate-api.com/v4/latest/${from}`;
+        const url = `https://api.coingecko.com/api/v3/simple/price?ids=${from}&vs_currencies=${to}`;
         const res = await fetch(url);
         const data = await res.json();
 
-        const rate = data.rates[to];
-        const result = (amount * rate).toFixed(2);
+        const rate = data[from][to];
+        const result = (amount * rate).toFixed(6);
 
-        document.getElementById('result').innerText = `${amount} ${from} = ${result} ${to}`;
-      } catch (error) {
-        document.getElementById('result').innerText = 'Error fetching exchange rates.';
+        document.getElementById('result').innerText =
+          `${amount} ${from.toUpperCase()} = ${result} ${to.toUpperCase()}`;
+      } catch (err) {
+        document.getElementById('result').innerText = 'Error fetching data.';
       }
     }
   </script>
