@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Crypto Converter</title>
+  <title>Crypto Currency Converter</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to bottom right, #1f2937, #111827);
+      background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
       color: #fff;
       display: flex;
       justify-content: center;
@@ -17,134 +17,154 @@
     }
 
     .converter {
-      background: #222;
+      background: #1c1c1c;
       padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 0 30px rgba(0,0,0,0.3);
-      width: 320px;
+      border-radius: 20px;
+      box-shadow: 0 0 25px rgba(0, 255, 204, 0.3);
+      width: 340px;
       text-align: center;
       position: relative;
     }
 
     h2 {
       margin-bottom: 20px;
-      color: #10b981;
+      color: #00ffcc;
     }
 
-    input, select, button {
-      margin: 10px 0;
-      padding: 12px;
+    select, input, button {
       width: 100%;
+      padding: 10px;
+      margin: 8px 0;
       font-size: 16px;
-      border-radius: 8px;
+      border-radius: 10px;
       border: none;
-      outline: none;
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    }
+
+    select, input {
+      background-color: #2a2a2a;
+      color: #fff;
     }
 
     button {
-      background-color: #10b981;
-      color: white;
+      background-color: #00ffcc;
+      color: #000;
       font-weight: bold;
       cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #00e6b3;
     }
 
     .result {
       margin-top: 15px;
       font-weight: bold;
-      color: #fff;
-      min-height: 24px;
     }
 
-    .spinner {
-      border: 4px solid rgba(255, 255, 255, 0.2);
-      border-top: 4px solid #10b981;
-      border-radius: 50%;
-      width: 24px;
-      height: 24px;
-      animation: spin 1s linear infinite;
-      margin: 10px auto;
+    #spinner {
       display: none;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      font-size: 14px;
+      color: #aaa;
     }
 
     .footer {
-      margin-top: 20px;
       font-size: 12px;
-      color: #aaa;
+      margin-top: 20px;
+      color: #555;
+    }
+
+    .logo {
+      position: absolute;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #00ffcc;
+      color: #000;
+      padding: 8px 16px;
+      border-radius: 50px;
+      font-weight: bold;
+      font-size: 14px;
+      box-shadow: 0 0 10px rgba(0,255,204,0.4);
     }
   </style>
 </head>
 <body>
 
   <div class="converter">
+    <div class="logo">MOHAMED IBRAHIM</div>
     <h2>Crypto Converter</h2>
 
-    <input type="number" id="amount" placeholder="Amount" min="0.01" step="0.01"/>
+    <input type="number" id="amount" placeholder="Enter amount" />
 
-    <select id="fromCurrency">
-      <option value="bitcoin">Bitcoin</option>
-      <option value="ethereum">Ethereum</option>
-      <option value="tether">Tether</option>
-    </select>
-
-    <select id="toCurrency">
-      <option value="usd">USD</option>
-      <option value="solana">Solana</option>
-      <option value="tether">Tether</option>
-    </select>
+    <select id="fromCurrency"></select>
+    <select id="toCurrency"></select>
 
     <button onclick="convert()">Convert</button>
 
-    <div class="spinner" id="spinner"></div>
+    <div id="spinner">⏳ Loading...</div>
     <div class="result" id="result"></div>
 
-    <div class="footer">Developed by Mohamed Ibrahim</div>
+    <div class="footer">© 2025 Mohamed Ibrahim - github.com/egydevol</div>
   </div>
 
   <script>
-    async function convert() {
-      const amount = parseFloat(document.getElementById('amount').value);
-      const from = document.getElementById('fromCurrency').value;
-      const to = document.getElementById('toCurrency').value;
-      const resultEl = document.getElementById('result');
-      const spinner = document.getElementById('spinner');
+    const currencies = [
+      "BTC", "ETH", "USDT", "SOL", "BNB", "DOGE",
+      "ADA", "XRP", "LTC", "MATIC", "DOT", "AVAX",
+      "USD", "EUR", "EGP"
+    ];
 
-      resultEl.innerText = '';
-      spinner.style.display = 'block';
+    const fromSelect = document.getElementById("fromCurrency");
+    const toSelect = document.getElementById("toCurrency");
+
+    currencies.forEach(currency => {
+      const option1 = document.createElement("option");
+      option1.value = currency;
+      option1.text = currency;
+      fromSelect.appendChild(option1);
+
+      const option2 = document.createElement("option");
+      option2.value = currency;
+      option2.text = currency;
+      toSelect.appendChild(option2);
+    });
+
+    async function convert() {
+      const amount = parseFloat(document.getElementById("amount").value);
+      const from = document.getElementById("fromCurrency").value;
+      const to = document.getElementById("toCurrency").value;
+      const resultEl = document.getElementById("result");
+      const spinner = document.getElementById("spinner");
+
+      resultEl.innerText = "";
+      spinner.style.display = "block";
 
       if (isNaN(amount) || amount <= 0) {
-        spinner.style.display = 'none';
-        resultEl.innerText = '❌ Please enter a valid amount.';
-        return;
-      }
-
-      if (from === to) {
-        spinner.style.display = 'none';
-        resultEl.innerText = `${amount} ${from.toUpperCase()} = ${amount} ${to.toUpperCase()}`;
+        spinner.style.display = "none";
+        resultEl.innerText = "❌ Enter a valid amount.";
         return;
       }
 
       try {
-        const url = `https://api.coingecko.com/api/v3/simple/price?ids=${from}&vs_currencies=${to}`;
+        const url = `https://api.coinbase.com/v2/exchange-rates?currency=${from}`;
         const res = await fetch(url);
         const data = await res.json();
-        spinner.style.display = 'none';
 
-        const rate = data[from]?.[to];
+        const rate = data.data.rates[to];
         if (!rate) {
-          resultEl.innerText = `❌ Conversion not available for ${from} → ${to}`;
+          spinner.style.display = "none";
+          resultEl.innerText = `❌ Conversion rate not available for ${from} → ${to}`;
           return;
         }
 
-        const result = (amount * rate).toFixed(6);
-        resultEl.innerText = `${amount} ${from.toUpperCase()} = ${result} ${to.toUpperCase()}`;
+        const result = (amount * parseFloat(rate)).toFixed(6);
+        spinner.style.display = "none";
+        resultEl.innerText = `${amount} ${from} = ${result} ${to}`;
       } catch (err) {
-        spinner.style.display = 'none';
-        resultEl.innerText = '❌ Failed to fetch data.';
+        spinner.style.display = "none";
+        resultEl.innerText = "❌ Failed to fetch rates.";
       }
     }
   </script>
